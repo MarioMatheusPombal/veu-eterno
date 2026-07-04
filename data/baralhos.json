@@ -1,62 +1,70 @@
 {
-  "ordwyn": {
-	"nome": "Muralha Radiante",
-	"comandante": "ordwyn",
-	"cartas": {
-	  "cr_fonte": 16,
-	  "cr_escudeiro": 3,
-	  "cr_clerica": 3,
-	  "cr_falcao": 3,
-	  "cr_capitao": 3,
-	  "cr_guardiao": 3,
-	  "cr_juiza": 3,
-	  "cr_chamado": 3,
-	  "cr_serafim": 3
+	"ordwyn": {
+		"nome": "Muralha Radiante",
+		"comandante": "ordwyn",
+		"cartas": {
+			"cr_fonte": 16,
+			"cr_escudeiro": 3,
+			"cr_clerica": 3,
+			"cr_falcao": 3,
+			"cr_capitao": 3,
+			"cr_guardiao": 3,
+			"cr_juiza": 3,
+			"cr_chamado": 3,
+			"cr_serafim": 3
+		},
+		"foil": ["cr_juiza", "cr_capitao"],
+		"holo": ["cr_serafim"]
+	},
+	"sylvaine": {
+		"nome": "Coração da Floresta",
+		"comandante": "sylvaine",
+		"cartas": {
+			"vs_fonte": 16,
+			"vs_lobo": 3,
+			"vs_druida": 3,
+			"vs_javali": 3,
+			"vs_emboscada": 3,
+			"vs_urso": 3,
+			"vs_mamute": 3,
+			"vs_gigante": 3,
+			"vs_hidra": 3
+		},
+		"foil": ["vs_gigante", "vs_mamute"],
+		"holo": ["vs_hidra"]
+	},
+	"nyx": {
+		"nome": "Maré de Sussurros",
+		"comandante": "nyx",
+		"cartas": {
+			"vds_fonte": 16,
+			"vds_cultista": 3,
+			"vds_espectro": 3,
+			"vds_vibora": 3,
+			"vds_dreno": 3,
+			"vds_sacerdotisa": 3,
+			"vds_toque_vazio": 3,
+			"vds_horror": 3,
+			"vds_ceifador": 3
+		},
+		"foil": ["vds_toque_vazio", "vds_sacerdotisa"],
+		"holo": ["vds_ceifador"]
+	},
+	"korrath": {
+		"nome": "Avalanche de Cinzas",
+		"comandante": "korrath",
+		"cartas": {
+			"cc_fonte": 16,
+			"cc_fanatico": 3,
+			"cc_lanca": 3,
+			"cc_batedor": 3,
+			"cc_elemental": 3,
+			"cc_berserker": 3,
+			"cc_furia": 3,
+			"cc_brutamontes": 3,
+			"cc_dragonete": 3
+		},
+		"foil": ["cc_berserker", "cc_furia"],
+		"holo": ["cc_dragonete"]
 	}
-  },
-  "sylvaine": {
-	"nome": "Coração da Floresta",
-	"comandante": "sylvaine",
-	"cartas": {
-	  "vs_fonte": 16,
-	  "vs_lobo": 3,
-	  "vs_druida": 3,
-	  "vs_javali": 3,
-	  "vs_emboscada": 3,
-	  "vs_urso": 3,
-	  "vs_mamute": 3,
-	  "vs_gigante": 3,
-	  "vs_hidra": 3
-	}
-  },
-  "nyx": {
-	"nome": "Maré de Sussurros",
-	"comandante": "nyx",
-	"cartas": {
-	  "vds_fonte": 16,
-	  "vds_cultista": 3,
-	  "vds_espectro": 3,
-	  "vds_vibora": 3,
-	  "vds_dreno": 3,
-	  "vds_sacerdotisa": 3,
-	  "vds_toque_vazio": 3,
-	  "vds_horror": 3,
-	  "vds_ceifador": 3
-	}
-  },
-  "korrath": {
-	"nome": "Avalanche de Cinzas",
-	"comandante": "korrath",
-	"cartas": {
-	  "cc_fonte": 16,
-	  "cc_fanatico": 3,
-	  "cc_lanca": 3,
-	  "cc_batedor": 3,
-	  "cc_elemental": 3,
-	  "cc_berserker": 3,
-	  "cc_furia": 3,
-	  "cc_brutamontes": 3,
-	  "cc_dragonete": 3
-	}
-  }
 }

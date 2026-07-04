@@ -20,10 +20,7 @@ var btn_iniciar_rede: Button
 func _ready() -> void:
 	if Rede.ativo or Rede.conectado:
 		Rede.encerrar()
-	var fundo := ColorRect.new()
-	fundo.color = Color(0.07, 0.08, 0.10)
-	fundo.set_anchors_preset(Control.PRESET_FULL_RECT)
-	add_child(fundo)
+	_montar_fundo("res://assets/arte/ui/fundo_menu.png", 0.45)
 	telas["principal"] = _tela_principal()
 	telas["local"] = _tela_local()
 	telas["ip"] = _tela_ip()
@@ -37,6 +34,29 @@ func _ready() -> void:
 func _mostrar(nome: String) -> void:
 	for t in telas:
 		telas[t].visible = t == nome
+
+## Usa a arte de fundo se o PNG existir; senão, cor sólida. Um véu escuro por cima
+## garante a legibilidade do texto em qualquer arte.
+func _montar_fundo(caminho: String, escurecer: float) -> void:
+	if ResourceLoader.exists(caminho, "Texture2D"):
+		var tex := TextureRect.new()
+		tex.texture = load(caminho)
+		tex.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		tex.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
+		tex.set_anchors_preset(Control.PRESET_FULL_RECT)
+		tex.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		add_child(tex)
+		var veu := ColorRect.new()
+		veu.color = Color(0.02, 0.02, 0.04, escurecer)
+		veu.set_anchors_preset(Control.PRESET_FULL_RECT)
+		veu.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		add_child(veu)
+	else:
+		var fundo := ColorRect.new()
+		fundo.color = Color(0.07, 0.08, 0.10)
+		fundo.set_anchors_preset(Control.PRESET_FULL_RECT)
+		fundo.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		add_child(fundo)
 
 func _centro_com_vbox() -> Array:
 	var centro := CenterContainer.new()

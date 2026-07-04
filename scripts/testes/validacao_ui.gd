@@ -13,6 +13,25 @@ func _rodar() -> void:
 	menu.queue_free()
 	await get_tree().process_frame
 
+	print("[validacao] shaders e acabamentos...")
+	for nome in ["tilt_3d", "foil", "holo"]:
+		var shader: Shader = load("res://assets/shaders/%s.gdshader" % nome)
+		if shader == null:
+			push_error("Shader %s não carregou." % nome)
+	var carta_foil := CartaVisual.new()
+	add_child(carta_foil)
+	var dados_foil: Dictionary = BancoDados.cartas["cr_serafim"].duplicate()
+	dados_foil["acabamento"] = "holo"
+	carta_foil.configurar(dados_foil)
+	var visor := DetalheCarta.new()
+	add_child(visor)
+	visor.abrir_carta(dados_foil)
+	await get_tree().create_timer(0.5).timeout
+	visor.fechar()
+	visor.queue_free()
+	carta_foil.queue_free()
+	await get_tree().process_frame
+
 	print("[validacao] instanciando partida (Ordwyn vs IA Korrath)...")
 	BancoDados.config_partida = {"jogadores": [
 		{"comandante": "ordwyn", "eh_ia": false},

@@ -26,8 +26,14 @@ func _ready() -> void:
 		var lista: Array = []
 		for id_carta in b["cartas"]:
 			assert(cartas.has(id_carta), "Carta desconhecida no baralho %s: %s" % [id_baralho, id_carta])
-			for _i in int(b["cartas"][id_carta]):
-				lista.append(id_carta)
+			for k in int(b["cartas"][id_carta]):
+				# A primeira cópia de cartas listadas em "holo"/"foil" ganha o acabamento.
+				var acabamento := "normal"
+				if k == 0 and id_carta in b.get("holo", []):
+					acabamento = "holo"
+				elif k == 0 and id_carta in b.get("foil", []):
+					acabamento = "foil"
+				lista.append({"id": id_carta, "acabamento": acabamento})
 		assert(lista.size() >= 40, "Baralho %s tem menos de 40 cartas." % id_baralho)
 		baralhos[id_baralho] = {"nome": b["nome"], "comandante": b["comandante"], "lista": lista}
 

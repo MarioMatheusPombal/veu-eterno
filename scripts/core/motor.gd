@@ -40,8 +40,12 @@ func iniciar(configs: Array, semente: int = 0) -> void:
 		j.vida = int(j.comandante["vida"])
 		var lista: Array = BancoDados.baralhos[configs[i]["comandante"]]["lista"].duplicate()
 		_embaralhar(lista)
-		for id_carta in lista:
-			j.baralho.append(BancoDados.cartas[id_carta])
+		for entrada in lista:
+			var dados: Dictionary = BancoDados.cartas[entrada["id"]]
+			if str(entrada.get("acabamento", "normal")) != "normal":
+				dados = dados.duplicate()  # cópia foil/holo carrega o acabamento consigo
+				dados["acabamento"] = entrada["acabamento"]
+			j.baralho.append(dados)
 		jogadores.append(j)
 	for j in jogadores:
 		for _k in MAO_INICIAL:
@@ -219,6 +223,7 @@ func jogar_carta(idx: int, alvos: Dictionary = {}) -> String:
 		j.mao.remove_at(idx)
 		j.fonte_jogada = true
 		j.campo.append(InstanciaCarta.new(dados, ativo))
+		evento_visual.emit("jogada", {"dados": dados, "jogador": ativo})
 		_emitir("%s joga a Fonte %s." % [j.nome(), dados["nome"]])
 		estado_mudou.emit()
 		return ""
@@ -234,6 +239,7 @@ func jogar_carta(idx: int, alvos: Dictionary = {}) -> String:
 
 	_pagar(custo_ajustado(dados, j), j)
 	j.mao.remove_at(idx)
+	evento_visual.emit("jogada", {"dados": dados, "jogador": ativo})
 	if alvos.has("sacrificio"):
 		_emitir("%s sacrifica %s." % [j.nome(), alvos["sacrificio"].nome()])
 		_destruir(alvos["sacrificio"])

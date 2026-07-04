@@ -6,7 +6,7 @@ extends Control
 ## de a UI ser reconstruída com o novo estado.
 
 const TAM_MAO := Vector2(112, 152)
-const TAM_CAMPO := Vector2(92, 126)
+const TAM_CAMPO := Vector2(104, 142)
 const COR_ALVO := Color(0.30, 0.90, 0.40)
 const COR_ELEGIVEL := Color(0.95, 0.85, 0.30)
 const COR_SELECAO := Color(0.95, 0.45, 0.20)
@@ -29,6 +29,8 @@ var ia_ocupada := false
 var fila_anim: Array = []
 var animando := false
 var camada_anim: Control
+var camada_linhas: Control  # linhas de bloqueio desenhadas por cima do tabuleiro
+var detalhe: DetalheCarta   # visualização ampliada (botão direito)
 var _ultimo_turno := -1
 
 var lbl_fase: Label
@@ -61,15 +63,21 @@ func _ready() -> void:
 			{"comandante": "korrath", "eh_ia": true}]}
 	motor.iniciar(cfg["jogadores"], int(cfg.get("seed", 0)))
 	_atualizar()
+	_falas_de_entrada()
+
+func _falas_de_entrada() -> void:
+	var c0: String = motor.jogadores[0].comandante["id"]
+	var c1: String = motor.jogadores[1].comandante["id"]
+	# Fala específica contra o oponente tem prioridade; senão a fala de entrada.
+	Som.falar(c0, ["vs_" + c1, "entrada"], true)
+	get_tree().create_timer(2.4).timeout.connect(
+			func() -> void: Som.falar(c1, ["vs_" + c0, "entrada"], true))
 
 
 # ---------------------------------------------------------------- construção da UI
 
 func _montar_ui() -> void:
-	var fundo := ColorRect.new()
-	fundo.color = Color(0.07, 0.08, 0.10)
-	fundo.set_anchors_preset(Control.PRESET_FULL_RECT)
-	add_child(fundo)
+	_montar_fundo("res://assets/arte/ui/fundo_mesa.png", 0.35)
 
 	var margem := MarginContainer.new()
 	margem.set_anchors_preset(Control.PRESET_FULL_RECT)
@@ -119,11 +127,22 @@ func _montar_ui() -> void:
 	popup_cem.add_child(popup_vbox)
 	add_child(popup_cem)
 
+	# Linhas de bloqueio (desenhadas via sinal draw).
+	camada_linhas = Control.new()
+	camada_linhas.set_anchors_preset(Control.PRESET_FULL_RECT)
+	camada_linhas.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	camada_linhas.draw.connect(_desenhar_linhas)
+	add_child(camada_linhas)
+
 	# Camada de animações por cima de tudo (fantasmas de carta, projéteis, números).
 	camada_anim = Control.new()
 	camada_anim.set_anchors_preset(Control.PRESET_FULL_RECT)
 	camada_anim.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	add_child(camada_anim)
+
+	# Visualização ampliada (botão direito) — fica por cima de tudo.
+	detalhe = DetalheCarta.new()
+	add_child(detalhe)
 
 func _montar_lado(pos: String) -> HBoxContainer:
 	var h := HBoxContainer.new()
@@ -294,9 +313,25 @@ func _ao_acao_remota(pacote: Dictionary) -> void:
 # ---------------------------------------------------------------- animações
 
 func _evento_visual(tipo: String, info: Dictionary) -> void:
+	# Falas dos comandantes tocam mesmo com as animações desligadas.
+	match tipo:
+		"jogada":
+			Som.falar(motor.jogadores[int(info["jogador"])].comandante["id"], "jogar_carta")
+		"dano_comandante":
+			Som.falar(motor.jogadores[int(info["jogador"])].comandante["id"], "dano")
 	if not Opcoes.animacoes:
 		return
 	match tipo:
+		"jogada":
+			var dono := int(info["jogador"])
+			var pos := "baixo" if dono == _jogador_baixo() else "cima"
+			var de: Vector2
+			if pos == "baixo":
+				de = mao_box.get_global_rect().get_center()
+			else:
+				de = _pos_cmd(dono) + Vector2(0, -40)
+			fila_anim.append({"tipo": "voo_carta", "dados": info["dados"],
+					"de": de, "para": linhas["campo_" + pos].get_global_rect().get_center()})
 		"ataque":
 			fila_anim.append({"tipo": "voo_carta", "dados": info["origem"].dados,
 					"de": _pos_inst(info["origem"]), "para": _pos_alvo(info)})
@@ -436,11 +471,41 @@ func _atualizar() -> void:
 	_atualizar_rotulos()
 	_atualizar_botoes()
 	_aplicar_destaques()
+	camada_linhas.queue_redraw()
 	if motor.turno != _ultimo_turno and motor.fase != Motor.Fase.FIM:
 		_ultimo_turno = motor.turno
 		_banner("Seu turno!" if _posso_agir()
 				else "Turno de %s" % motor.jogador_ativo().nome().split(",")[0])
 	call_deferred("_verificar_ia")
+
+func _process(_delta: float) -> void:
+	# A linha bloqueador→mouse acompanha o cursor durante a escolha.
+	if motor != null and motor.fase == Motor.Fase.BLOQUEIO and bloqueador_sel != null:
+		camada_linhas.queue_redraw()
+
+## Desenha as linhas de bloqueio (bloqueador → atacante) e a linha em andamento até o mouse.
+func _desenhar_linhas() -> void:
+	if motor == null or motor.fase != Motor.Fase.BLOQUEIO:
+		return
+	var inv := camada_linhas.get_global_transform().affine_inverse()
+	for a in bloqueios:
+		if not visuais.has(a) or not visuais.has(bloqueios[a]):
+			continue
+		var de: Vector2 = inv * visuais[bloqueios[a]].get_global_rect().get_center()
+		var para: Vector2 = inv * visuais[a].get_global_rect().get_center()
+		camada_linhas.draw_line(de, para, COR_BLOQUEIO, 3.0, true)
+		camada_linhas.draw_circle(de, 6.0, COR_BLOQUEIO)
+		camada_linhas.draw_circle(para, 6.0, COR_ATACANTE)
+	if bloqueador_sel != null and visuais.has(bloqueador_sel):
+		var de: Vector2 = inv * visuais[bloqueador_sel].get_global_rect().get_center()
+		var para: Vector2 = inv * camada_linhas.get_global_mouse_position()
+		camada_linhas.draw_line(de, para, COR_SELECAO, 2.0, true)
+
+func _abrir_detalhe_carta(cv: CartaVisual) -> void:
+	detalhe.abrir_carta(cv.dados, motor, cv.instancia)
+
+func _abrir_detalhe_comandante(cv: ComandanteVisual) -> void:
+	detalhe.abrir_comandante(cv.comandante, motor.jogadores[cv.indice_jogador].vida)
 
 func _preencher_lado(pos: String, idx: int) -> void:
 	_limpar(slots_cmd[pos])
@@ -452,6 +517,7 @@ func _preencher_lado(pos: String, idx: int) -> void:
 			and motor.em_fase_principal() and modo == Modo.NORMAL
 	cv.configurar(j.comandante, j.vida, idx, mostrar_botao, motor.pode_comando(j) == "")
 	cv.clicado.connect(_clicou_comandante)
+	cv.detalhes.connect(_abrir_detalhe_comandante)
 	cv.comando_pressionado.connect(_pressionou_comando)
 	slots_cmd[pos].add_child(cv)
 	paineis_cmd[idx] = cv
@@ -461,6 +527,7 @@ func _preencher_lado(pos: String, idx: int) -> void:
 		var tam := TAM_CAMPO * (0.62 if inst.tipo() == "Fonte" else 1.0)
 		c.configurar(inst.dados, motor, inst, tam)
 		c.clicada.connect(_clicou_campo)
+		c.detalhes.connect(_abrir_detalhe_carta)
 		linha.add_child(c)
 		visuais[inst] = c
 	var disp: Dictionary = motor.essencia_disponivel(j)
@@ -480,6 +547,7 @@ func _preencher_mao() -> void:
 		c.configurar(dono.mao[i], motor, null, TAM_MAO)
 		c.set_meta("idx", i)
 		c.clicada.connect(_clicou_mao)
+		c.detalhes.connect(_abrir_detalhe_carta)
 		if not minha_vez or (motor.em_fase_principal() and motor.pode_jogar(i) != ""):
 			c.modulate = Color(0.55, 0.55, 0.55)
 		mao_box.add_child(c)
@@ -821,6 +889,9 @@ func _bloquear_ia() -> void:
 # ---------------------------------------------------------------- utilidades
 
 func _fim_de_jogo(vencedor: int) -> void:
+	Som.falar(motor.jogadores[vencedor].comandante["id"], "vitoria", true)
+	get_tree().create_timer(2.0).timeout.connect(func() -> void:
+		Som.falar(motor.jogadores[1 - vencedor].comandante["id"], "derrota", true))
 	var dlg := AcceptDialog.new()
 	dlg.title = "Fim da Partida"
 	dlg.dialog_text = "🏆 %s vence o duelo!" % motor.jogadores[vencedor].nome()
@@ -840,6 +911,29 @@ func _voltar_ao_menu() -> void:
 	if Rede.ativo:
 		Rede.encerrar()
 	get_tree().change_scene_to_file("res://scenes/menu_principal.tscn")
+
+## Usa a arte da mesa se o PNG existir; senão, cor sólida. Um véu escuro por cima
+## mantém as cartas legíveis sobre qualquer arte.
+func _montar_fundo(caminho: String, escurecer: float) -> void:
+	if ResourceLoader.exists(caminho, "Texture2D"):
+		var tex := TextureRect.new()
+		tex.texture = load(caminho)
+		tex.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		tex.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
+		tex.set_anchors_preset(Control.PRESET_FULL_RECT)
+		tex.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		add_child(tex)
+		var veu := ColorRect.new()
+		veu.color = Color(0.02, 0.02, 0.04, escurecer)
+		veu.set_anchors_preset(Control.PRESET_FULL_RECT)
+		veu.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		add_child(veu)
+	else:
+		var fundo := ColorRect.new()
+		fundo.color = Color(0.07, 0.08, 0.10)
+		fundo.set_anchors_preset(Control.PRESET_FULL_RECT)
+		fundo.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		add_child(fundo)
 
 func _log(texto: String) -> void:
 	if log_rt != null:

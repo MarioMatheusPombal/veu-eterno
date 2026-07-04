@@ -1,9 +1,13 @@
 class_name CartaVisual
-extends PanelContainer
-## Widget de carta: renderiza dados do banco (mão) ou uma InstanciaCarta (Campo).
-## Carrega a arte de dados["arte"] se o PNG existir; senão usa placeholder da cor da facção.
+extends Control
+## Widget de carta com TAMANHO FIXO (o conteúdo é recortado, nunca estica a carta).
+## Renderiza dados do banco (mão) ou uma InstanciaCarta (Campo).
+## Carrega a arte de dados["arte"] se o PNG existir; senão usa placeholder da facção.
+## Acabamentos: dados["acabamento"] == "foil" | "holo" aplicam shader por cima.
+## Clique esquerdo → `clicada`; clique direito → `detalhes` (visualização ampliada).
 
 signal clicada(visual: CartaVisual)
+signal detalhes(visual: CartaVisual)
 
 const CORES_FACCAO := {
 	"Coroa Radiante": Color(0.85, 0.72, 0.35),
@@ -12,6 +16,7 @@ const CORES_FACCAO := {
 	"Corrente do Caos": Color(0.80, 0.33, 0.22),
 }
 const COR_INCOLOR := Color(0.55, 0.55, 0.58)
+const TAM_BASE := 112.0  # largura de referência para a escala das fontes
 
 var dados: Dictionary = {}
 var instancia: InstanciaCarta = null
@@ -30,48 +35,58 @@ func configurar(p_dados: Dictionary, p_motor: Motor = null, p_instancia: Instanc
 	motor = p_motor
 	instancia = p_instancia
 	custom_minimum_size = tamanho
-	_construir()
+	size = tamanho
+	clip_contents = true
+	mouse_filter = Control.MOUSE_FILTER_STOP
+	tooltip_text = descricao()
+	_construir(tamanho)
 
-func _construir() -> void:
+func _construir(tam: Vector2) -> void:
+	var e := tam.x / TAM_BASE  # escala tipográfica
+
+	var painel := Panel.new()
+	painel.set_anchors_preset(Control.PRESET_FULL_RECT)
+	painel.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_estilo = StyleBoxFlat.new()
 	_estilo.bg_color = Color(0.13, 0.13, 0.17)
 	_estilo.border_color = cor_de_faccao(dados.get("faccao", []))
-	_estilo.set_border_width_all(2)
-	_estilo.set_corner_radius_all(6)
-	_estilo.content_margin_left = 5
-	_estilo.content_margin_right = 5
-	_estilo.content_margin_top = 4
-	_estilo.content_margin_bottom = 4
-	add_theme_stylebox_override("panel", _estilo)
-	mouse_filter = Control.MOUSE_FILTER_STOP
-	tooltip_text = _descricao()
+	_estilo.set_border_width_all(maxi(int(2 * e), 2))
+	_estilo.set_corner_radius_all(int(6 * e))
+	painel.add_theme_stylebox_override("panel", _estilo)
+	add_child(painel)
 
 	var v := VBoxContainer.new()
+	v.set_anchors_preset(Control.PRESET_FULL_RECT)
+	v.offset_left = 6 * e
+	v.offset_right = -6 * e
+	v.offset_top = 5 * e
+	v.offset_bottom = -5 * e
 	v.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	v.add_theme_constant_override("separation", 2)
+	v.add_theme_constant_override("separation", int(2 * e))
 	add_child(v)
 
 	var topo := HBoxContainer.new()
 	topo.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	v.add_child(topo)
-	var nome := _label(str(dados.get("nome", "?")), 10)
+	var nome := _label(str(dados.get("nome", "?")), int(10 * e))
 	nome.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	nome.clip_text = true
 	topo.add_child(nome)
 	if dados.has("custo"):
-		topo.add_child(_label(_texto_custo(), 10))
+		topo.add_child(_label(_texto_custo(), int(10 * e)))
 
 	var arte := _no_de_arte()
-	arte.custom_minimum_size = Vector2(0, custom_minimum_size.y * 0.34)
+	arte.custom_minimum_size = Vector2(0, tam.y * 0.34)
 	v.add_child(arte)
 
-	v.add_child(_label(_linha_de_tipo(), 8))
+	v.add_child(_label(_linha_de_tipo(), int(8 * e)))
 
 	var texto := _texto_de_regras()
 	if texto != "":
-		var lbl := _label(texto, 8)
+		var lbl := _label(texto, int(8 * e))
 		lbl.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		lbl.size_flags_vertical = Control.SIZE_EXPAND_FILL
+		lbl.clip_contents = true
 		v.add_child(lbl)
 	else:
 		var vazio := Control.new()
@@ -80,15 +95,35 @@ func _construir() -> void:
 		v.add_child(vazio)
 
 	if dados.get("tipo", "") == "Convocado":
-		var stats := _label(_texto_stats(), 11)
+		var stats := _label(_texto_stats(), int(11 * e))
 		stats.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
 		v.add_child(stats)
+
+	_aplicar_acabamento(e)
 
 	if instancia != null and instancia.usada:
 		modulate = Color(0.55, 0.55, 0.55)
 	elif instancia != null and instancia.eh_convocado() and instancia.entrou_neste_turno \
 			and motor != null and not motor.tem_kw(instancia, "Investida"):
 		modulate = Color(0.75, 0.75, 0.85)  # mal de invocação
+
+func _aplicar_acabamento(e: float) -> void:
+	var acabamento := str(dados.get("acabamento", ""))
+	if acabamento != "foil" and acabamento != "holo":
+		return
+	var overlay := ColorRect.new()
+	overlay.set_anchors_preset(Control.PRESET_FULL_RECT)
+	overlay.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	var mat := ShaderMaterial.new()
+	mat.shader = load("res://assets/shaders/%s.gdshader" % acabamento)
+	overlay.material = mat
+	add_child(overlay)
+	# Etiqueta discreta do acabamento no rodapé esquerdo.
+	var etiqueta := _label("✦ FOIL" if acabamento == "foil" else "★ HOLO", int(7 * e))
+	etiqueta.add_theme_color_override("font_color", Color(0.9, 0.85, 1.0, 0.8))
+	etiqueta.set_anchors_preset(Control.PRESET_BOTTOM_LEFT)
+	etiqueta.position = Vector2(6 * e, size.y - 14 * e)
+	add_child(etiqueta)
 
 func _no_de_arte() -> Control:
 	var caminho := str(dados.get("arte", ""))
@@ -98,6 +133,7 @@ func _no_de_arte() -> Control:
 		tex.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 		tex.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
 		tex.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		tex.clip_contents = true
 		return tex
 	var cor := ColorRect.new()
 	cor.color = cor_de_faccao(dados.get("faccao", [])).darkened(0.45)
@@ -142,15 +178,19 @@ func _texto_stats() -> String:
 		return "%d/%d" % [p, r]
 	return "%d/%d" % [int(dados.get("poder", 0)), int(dados.get("resiliencia", 0))]
 
-func _descricao() -> String:
+func descricao() -> String:
 	var linhas: Array = [str(dados.get("nome", "?")), _linha_de_tipo()]
 	if dados.has("custo"):
 		linhas.append("Custo: " + _texto_custo())
+	if dados.get("tipo", "") == "Convocado":
+		linhas.append("Poder/Resiliência: " + _texto_stats())
 	var regras := _texto_de_regras()
 	if regras != "":
 		linhas.append(regras)
 	if str(dados.get("texto_flavor", "")) != "":
 		linhas.append("« %s »" % dados["texto_flavor"])
+	if str(dados.get("acabamento", "")) != "":
+		linhas.append("Acabamento: " + str(dados["acabamento"]).to_upper())
 	return "\n".join(linhas)
 
 func destacar(cor: Color) -> void:
@@ -160,9 +200,9 @@ func destacar(cor: Color) -> void:
 func definir_selo(texto: String) -> void:
 	if _selo == null:
 		_selo = _label("", 12)
-		_selo.set_anchors_preset(Control.PRESET_CENTER_TOP)
 		_selo.add_theme_color_override("font_color", Color(1.0, 0.9, 0.3))
 		add_child(_selo)
+		_selo.position = Vector2(size.x / 2.0 - 12, 2)
 	_selo.text = texto
 
 func _label(texto: String, tamanho_fonte: int) -> Label:
@@ -173,6 +213,8 @@ func _label(texto: String, tamanho_fonte: int) -> Label:
 	return lbl
 
 func _gui_input(evento: InputEvent) -> void:
-	if evento is InputEventMouseButton and evento.pressed \
-			and evento.button_index == MOUSE_BUTTON_LEFT:
-		clicada.emit(self)
+	if evento is InputEventMouseButton and evento.pressed:
+		if evento.button_index == MOUSE_BUTTON_LEFT:
+			clicada.emit(self)
+		elif evento.button_index == MOUSE_BUTTON_RIGHT:
+			detalhes.emit(self)
