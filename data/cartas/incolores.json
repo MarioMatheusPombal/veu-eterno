@@ -1,0 +1,30 @@
+[
+  {
+	"id": "inc_golem", "nome": "Golem de Pedra", "tipo": "Convocado", "subtipo": "Constructo",
+	"faccao": [], "custo": {"incolor": 3},
+	"poder": 2, "resiliencia": 3, "palavras_chave": [],
+	"texto_flavor": "Não serve a corrente alguma. Serve a quem pagar.",
+	"raridade": "comum", "arte": "res://assets/arte/cartas/inc_golem.png"
+  },
+  {
+	"id": "inc_sentinela", "nome": "Sentinela do Limiar", "tipo": "Convocado", "subtipo": "Constructo",
+	"faccao": [], "custo": {"incolor": 4},
+	"poder": 3, "resiliencia": 3, "palavras_chave": ["Guarda"],
+	"texto_flavor": "Foi construída antes das facções. Vai durar mais que elas.",
+	"raridade": "incomum", "arte": "res://assets/arte/cartas/inc_sentinela.png"
+  },
+  {
+	"id": "inc_prisma", "nome": "Prisma do Véu", "tipo": "Relíquia",
+	"faccao": [], "custo": {"incolor": 2},
+	"efeitos": [{"gatilho": "ativada", "custo": {"incolor": 2}, "acao": "comprar", "valor": 1}],
+	"texto_efeito": "2, Usar [Esta Relíquia]: compre uma carta.",
+	"raridade": "incomum", "arte": "res://assets/arte/cartas/inc_prisma.png"
+  },
+  {
+	"id": "inc_obelisco", "nome": "Obelisco Cinzento", "tipo": "Relíquia",
+	"faccao": [], "custo": {"incolor": 3},
+	"efeitos": [{"gatilho": "ativada", "custo": {}, "acao": "essencia", "valor": 1, "faccao": false}],
+	"texto_efeito": "Usar [Esta Relíquia]: ganhe 1 Essência incolor neste turno.",
+	"raridade": "incomum", "arte": "res://assets/arte/cartas/inc_obelisco.png"
+  }
+]

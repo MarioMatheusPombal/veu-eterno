@@ -1,0 +1,95 @@
+[
+  {
+	"id": "cc_fonte", "nome": "Fonte do Caos", "tipo": "Fonte", "basica": true,
+	"faccao": ["Corrente do Caos"],
+	"texto_efeito": "Produz 1 Essência da Corrente do Caos.",
+	"texto_flavor": "O chão ainda queima onde o Véu rasgou.",
+	"raridade": "comum", "arte": "res://assets/arte/cartas/cc_fonte.png"
+  },
+  {
+	"id": "cc_fanatico", "nome": "Fanático da Chama", "tipo": "Convocado", "subtipo": "Fanático",
+	"faccao": ["Corrente do Caos"], "custo": {"incolor": 0, "Corrente do Caos": 1},
+	"poder": 2, "resiliencia": 1, "palavras_chave": [],
+	"texto_flavor": "Arde rápido quem arde por escolha.",
+	"raridade": "comum", "arte": "res://assets/arte/cartas/cc_fanatico.png"
+  },
+  {
+	"id": "cc_batedor", "nome": "Batedor Veloz", "tipo": "Convocado", "subtipo": "Bárbaro",
+	"faccao": ["Corrente do Caos"], "custo": {"incolor": 1, "Corrente do Caos": 1},
+	"poder": 2, "resiliencia": 1, "palavras_chave": ["Investida"],
+	"texto_flavor": "Chegou antes do aviso de que vinha.",
+	"raridade": "comum", "arte": "res://assets/arte/cartas/cc_batedor.png"
+  },
+  {
+	"id": "cc_elemental", "nome": "Elemental de Brasas", "tipo": "Convocado", "subtipo": "Elemental",
+	"faccao": ["Corrente do Caos"], "custo": {"incolor": 1, "Corrente do Caos": 2},
+	"poder": 3, "resiliencia": 2, "palavras_chave": [],
+	"efeitos": [{"gatilho": "ao_entrar", "acao": "dano", "alvo": "comandante_inimigo", "valor": 1}],
+	"texto_efeito": "Quando [Este Convocado] entra em jogo, cause 1 de dano ao Comandante inimigo.",
+	"raridade": "comum", "arte": "res://assets/arte/cartas/cc_elemental.png"
+  },
+  {
+	"id": "cc_berserker", "nome": "Berserker do Punho", "tipo": "Convocado", "subtipo": "Bárbaro",
+	"faccao": ["Corrente do Caos"], "custo": {"incolor": 2, "Corrente do Caos": 1},
+	"poder": 3, "resiliencia": 2, "palavras_chave": ["Primeiro Golpe"],
+	"texto_flavor": "O primeiro golpe é o único que ele planeja.",
+	"raridade": "incomum", "arte": "res://assets/arte/cartas/cc_berserker.png"
+  },
+  {
+	"id": "cc_brutamontes", "nome": "Brutamontes das Cinzas", "tipo": "Convocado", "subtipo": "Bárbaro",
+	"faccao": ["Corrente do Caos"], "custo": {"incolor": 3, "Corrente do Caos": 1},
+	"poder": 5, "resiliencia": 3, "palavras_chave": [],
+	"texto_flavor": "Não pergunte o que houve com a última muralha.",
+	"raridade": "comum", "arte": "res://assets/arte/cartas/cc_brutamontes.png"
+  },
+  {
+	"id": "cc_dragonete", "nome": "Dragonete Vulcânico", "tipo": "Convocado", "subtipo": "Elemental",
+	"faccao": ["Corrente do Caos"], "custo": {"incolor": 3, "Corrente do Caos": 2},
+	"poder": 4, "resiliencia": 3, "palavras_chave": ["Voo"],
+	"texto_flavor": "Jovem demais para saber medo. Quente demais para precisar.",
+	"raridade": "rara", "arte": "res://assets/arte/cartas/cc_dragonete.png"
+  },
+  {
+	"id": "cc_senhor", "nome": "Senhor da Guerra", "tipo": "Convocado", "subtipo": "Bárbaro",
+	"faccao": ["Corrente do Caos"], "custo": {"incolor": 3, "Corrente do Caos": 2},
+	"poder": 5, "resiliencia": 4, "palavras_chave": [],
+	"efeitos": [{"gatilho": "continua", "acao": "aura", "poder": 1, "resiliencia": 0, "excluir_proprio": true}],
+	"texto_efeito": "Outros Convocados aliados ganham +1/+0.",
+	"raridade": "rara", "arte": "res://assets/arte/cartas/cc_senhor.png"
+  },
+  {
+	"id": "cc_lanca", "nome": "Lança de Fogo", "tipo": "Feitiço",
+	"faccao": ["Corrente do Caos"], "custo": {"incolor": 0, "Corrente do Caos": 1},
+	"efeitos": [{"gatilho": "imediato", "acao": "dano", "alvo": "qualquer_inimigo", "valor": 2}],
+	"texto_efeito": "Cause 2 de dano a um Convocado inimigo alvo ou ao Comandante inimigo.",
+	"raridade": "comum", "arte": "res://assets/arte/cartas/cc_lanca.png"
+  },
+  {
+	"id": "cc_erupcao", "nome": "Erupção", "tipo": "Feitiço",
+	"faccao": ["Corrente do Caos"], "custo": {"incolor": 2, "Corrente do Caos": 1},
+	"efeitos": [{"gatilho": "imediato", "acao": "dano", "alvo": "qualquer_inimigo", "valor": 3}],
+	"texto_efeito": "Cause 3 de dano a um Convocado inimigo alvo ou ao Comandante inimigo.",
+	"raridade": "comum", "arte": "res://assets/arte/cartas/cc_erupcao.png"
+  },
+  {
+	"id": "cc_furia", "nome": "Fúria Coletiva", "tipo": "Feitiço",
+	"faccao": ["Corrente do Caos"], "custo": {"incolor": 1, "Corrente do Caos": 1},
+	"efeitos": [{"gatilho": "imediato", "acao": "buff", "alvo": "todos_aliados", "poder": 1, "resiliencia": 0, "duracao": "turno", "palavras_chave": ["Investida"]}],
+	"texto_efeito": "Convocados aliados ganham +1/+0 e Investida até o final do turno.",
+	"raridade": "incomum", "arte": "res://assets/arte/cartas/cc_furia.png"
+  },
+  {
+	"id": "cc_tempestade", "nome": "Tempestade de Cinzas", "tipo": "Feitiço",
+	"faccao": ["Corrente do Caos"], "custo": {"incolor": 2, "Corrente do Caos": 2},
+	"efeitos": [{"gatilho": "imediato", "acao": "dano_todos", "alvo": "todos_inimigos", "valor": 2}],
+	"texto_efeito": "Cause 2 de dano a cada Convocado inimigo.",
+	"raridade": "rara", "arte": "res://assets/arte/cartas/cc_tempestade.png"
+  },
+  {
+	"id": "cc_totem", "nome": "Totem de Guerra", "tipo": "Relíquia",
+	"faccao": ["Corrente do Caos"], "custo": {"incolor": 1, "Corrente do Caos": 1},
+	"efeitos": [{"gatilho": "ativada", "custo": {"incolor": 1}, "acao": "dano", "alvo": "comandante_inimigo", "valor": 1}],
+	"texto_efeito": "1, Usar [Esta Relíquia]: cause 1 de dano ao Comandante inimigo.",
+	"raridade": "incomum", "arte": "res://assets/arte/cartas/cc_totem.png"
+  }
+]

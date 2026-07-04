@@ -1,0 +1,99 @@
+[
+  {
+	"id": "cr_fonte", "nome": "Fonte Radiante", "tipo": "Fonte", "basica": true,
+	"faccao": ["Coroa Radiante"],
+	"texto_efeito": "Produz 1 Essência da Coroa Radiante.",
+	"texto_flavor": "Onde o Véu se afina, a luz atravessa primeiro.",
+	"raridade": "comum", "arte": "res://assets/arte/cartas/cr_fonte.png"
+  },
+  {
+	"id": "cr_escudeiro", "nome": "Escudeiro Leal", "tipo": "Convocado", "subtipo": "Guerreiro",
+	"faccao": ["Coroa Radiante"], "custo": {"incolor": 0, "Coroa Radiante": 1},
+	"poder": 1, "resiliencia": 2, "palavras_chave": ["Guarda"],
+	"texto_flavor": "Pequeno demais para a glória, grande demais para recuar.",
+	"raridade": "comum", "arte": "res://assets/arte/cartas/cr_escudeiro.png"
+  },
+  {
+	"id": "cr_lanceiro", "nome": "Lanceiro do Alvorecer", "tipo": "Convocado", "subtipo": "Guerreiro",
+	"faccao": ["Coroa Radiante"], "custo": {"incolor": 1, "Coroa Radiante": 1},
+	"poder": 2, "resiliencia": 2, "palavras_chave": [],
+	"texto_flavor": "A primeira lança ergue-se com o sol.",
+	"raridade": "comum", "arte": "res://assets/arte/cartas/cr_lanceiro.png"
+  },
+  {
+	"id": "cr_clerica", "nome": "Clériga da Aurora", "tipo": "Convocado", "subtipo": "Clérigo",
+	"faccao": ["Coroa Radiante"], "custo": {"incolor": 1, "Coroa Radiante": 1},
+	"poder": 1, "resiliencia": 2, "palavras_chave": [],
+	"efeitos": [{"gatilho": "ao_entrar", "acao": "curar", "alvo": "comandante_aliado", "valor": 2}],
+	"texto_efeito": "Quando [Este Convocado] entra em jogo, você ganha 2 de Vida.",
+	"raridade": "comum", "arte": "res://assets/arte/cartas/cr_clerica.png"
+  },
+  {
+	"id": "cr_falcao", "nome": "Falcão Coroado", "tipo": "Convocado", "subtipo": "Guardião",
+	"faccao": ["Coroa Radiante"], "custo": {"incolor": 1, "Coroa Radiante": 1},
+	"poder": 2, "resiliencia": 1, "palavras_chave": ["Voo"],
+	"texto_flavor": "Os olhos da Coroa nunca dormem.",
+	"raridade": "comum", "arte": "res://assets/arte/cartas/cr_falcao.png"
+  },
+  {
+	"id": "cr_capitao", "nome": "Capitão do Estandarte", "tipo": "Convocado", "subtipo": "Guerreiro",
+	"faccao": ["Coroa Radiante"], "custo": {"incolor": 2, "Coroa Radiante": 1},
+	"poder": 2, "resiliencia": 2, "palavras_chave": [],
+	"efeitos": [{"gatilho": "continua", "acao": "aura", "poder": 1, "resiliencia": 0, "filtro": {"subtipo": "Guerreiro"}}],
+	"texto_efeito": "Seus Guerreiros ganham +1/+0.",
+	"raridade": "incomum", "arte": "res://assets/arte/cartas/cr_capitao.png"
+  },
+  {
+	"id": "cr_guardiao", "nome": "Guardião do Portão", "tipo": "Convocado", "subtipo": "Guardião",
+	"faccao": ["Coroa Radiante"], "custo": {"incolor": 1, "Coroa Radiante": 2},
+	"poder": 1, "resiliencia": 4, "palavras_chave": ["Guarda"],
+	"texto_flavor": "O portão cai quando ele cair. Nunca antes.",
+	"raridade": "comum", "arte": "res://assets/arte/cartas/cr_guardiao.png"
+  },
+  {
+	"id": "cr_juiza", "nome": "Juíza Radiante", "tipo": "Convocado", "subtipo": "Clérigo",
+	"faccao": ["Coroa Radiante"], "custo": {"incolor": 2, "Coroa Radiante": 2},
+	"poder": 3, "resiliencia": 3, "palavras_chave": ["Primeiro Golpe"],
+	"texto_flavor": "A sentença chega antes da defesa.",
+	"raridade": "incomum", "arte": "res://assets/arte/cartas/cr_juiza.png"
+  },
+  {
+	"id": "cr_serafim", "nome": "Serafim do Véu", "tipo": "Convocado", "subtipo": "Guardião",
+	"faccao": ["Coroa Radiante"], "custo": {"incolor": 3, "Coroa Radiante": 2},
+	"poder": 4, "resiliencia": 4, "palavras_chave": ["Voo"],
+	"efeitos": [{"gatilho": "ao_entrar", "acao": "curar", "alvo": "comandante_aliado", "valor": 3}],
+	"texto_efeito": "Quando [Este Convocado] entra em jogo, você ganha 3 de Vida.",
+	"raridade": "rara", "arte": "res://assets/arte/cartas/cr_serafim.png"
+  },
+  {
+	"id": "cr_chamado", "nome": "Chamado da Coroa", "tipo": "Feitiço",
+	"faccao": ["Coroa Radiante"], "custo": {"incolor": 2, "Coroa Radiante": 1},
+	"efeitos": [{"gatilho": "imediato", "acao": "token", "quantidade": 2, "token": {"nome": "Recruta Radiante", "subtipo": "Guerreiro", "poder": 1, "resiliencia": 1, "palavras_chave": []}}],
+	"texto_efeito": "Crie dois Convocados Recruta Radiante 1/1 do tipo Guerreiro.",
+	"raridade": "comum", "arte": "res://assets/arte/cartas/cr_chamado.png"
+  },
+  {
+	"id": "cr_bencao", "nome": "Bênção do Alvorecer", "tipo": "Feitiço",
+	"faccao": ["Coroa Radiante"], "custo": {"incolor": 0, "Coroa Radiante": 2},
+	"efeitos": [{"gatilho": "imediato", "acao": "buff", "alvo": "todos_aliados", "poder": 1, "resiliencia": 1, "duracao": "turno"}],
+	"texto_efeito": "Convocados aliados ganham +1/+1 até o final do turno.",
+	"raridade": "comum", "arte": "res://assets/arte/cartas/cr_bencao.png"
+  },
+  {
+	"id": "cr_julgamento", "nome": "Julgamento Solar", "tipo": "Feitiço",
+	"faccao": ["Coroa Radiante"], "custo": {"incolor": 1, "Coroa Radiante": 1},
+	"efeitos": [
+	  {"gatilho": "imediato", "acao": "dano", "alvo": "convocado_inimigo", "valor": 2},
+	  {"gatilho": "imediato", "acao": "curar", "alvo": "comandante_aliado", "valor": 2}
+	],
+	"texto_efeito": "Cause 2 de dano a um Convocado inimigo alvo. Você ganha 2 de Vida.",
+	"raridade": "comum", "arte": "res://assets/arte/cartas/cr_julgamento.png"
+  },
+  {
+	"id": "cr_relicario", "nome": "Relicário da Luz", "tipo": "Relíquia",
+	"faccao": ["Coroa Radiante"], "custo": {"incolor": 2, "Coroa Radiante": 1},
+	"efeitos": [{"gatilho": "ativada", "custo": {"incolor": 1}, "acao": "curar", "alvo": "comandante_aliado", "valor": 2}],
+	"texto_efeito": "1, Usar [Esta Relíquia]: você ganha 2 de Vida.",
+	"raridade": "incomum", "arte": "res://assets/arte/cartas/cr_relicario.png"
+  }
+]

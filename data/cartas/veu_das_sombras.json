@@ -1,0 +1,98 @@
+[
+  {
+	"id": "vds_fonte", "nome": "Fonte Sombria", "tipo": "Fonte", "basica": true,
+	"faccao": ["Véu das Sombras"],
+	"texto_efeito": "Produz 1 Essência do Véu das Sombras.",
+	"texto_flavor": "Alguns lugares lembram de cada morte que testemunharam.",
+	"raridade": "comum", "arte": "res://assets/arte/cartas/vds_fonte.png"
+  },
+  {
+	"id": "vds_cultista", "nome": "Cultista do Véu", "tipo": "Convocado", "subtipo": "Cultista",
+	"faccao": ["Véu das Sombras"], "custo": {"incolor": 0, "Véu das Sombras": 1},
+	"poder": 1, "resiliencia": 1, "palavras_chave": [],
+	"efeitos": [{"gatilho": "ao_morrer", "acao": "dano", "alvo": "comandante_inimigo", "valor": 1}],
+	"texto_efeito": "Quando [Este Convocado] morre, cause 1 de dano ao Comandante inimigo.",
+	"raridade": "comum", "arte": "res://assets/arte/cartas/vds_cultista.png"
+  },
+  {
+	"id": "vds_espectro", "nome": "Espectro Lamentoso", "tipo": "Convocado", "subtipo": "Espectro",
+	"faccao": ["Véu das Sombras"], "custo": {"incolor": 1, "Véu das Sombras": 1},
+	"poder": 2, "resiliencia": 1, "palavras_chave": ["Voo"],
+	"texto_flavor": "O lamento chega antes do frio.",
+	"raridade": "comum", "arte": "res://assets/arte/cartas/vds_espectro.png"
+  },
+  {
+	"id": "vds_vibora", "nome": "Víbora do Crepúsculo", "tipo": "Convocado", "subtipo": "Horror",
+	"faccao": ["Véu das Sombras"], "custo": {"incolor": 0, "Véu das Sombras": 2},
+	"poder": 1, "resiliencia": 1, "palavras_chave": ["Toque Mortal"],
+	"texto_flavor": "Uma gota basta.",
+	"raridade": "comum", "arte": "res://assets/arte/cartas/vds_vibora.png"
+  },
+  {
+	"id": "vds_sacerdotisa", "nome": "Sacerdotisa do Limiar", "tipo": "Convocado", "subtipo": "Cultista",
+	"faccao": ["Véu das Sombras"], "custo": {"incolor": 2, "Véu das Sombras": 1},
+	"poder": 2, "resiliencia": 2, "palavras_chave": [],
+	"efeitos": [{"gatilho": "ao_entrar", "acao": "reviver", "alvo": "cemiterio_convocado"}],
+	"texto_efeito": "Quando [Este Convocado] entra em jogo, retorne um Convocado alvo do seu Cemitério para a sua mão.",
+	"raridade": "incomum", "arte": "res://assets/arte/cartas/vds_sacerdotisa.png"
+  },
+  {
+	"id": "vds_horror", "nome": "Horror Rastejante", "tipo": "Convocado", "subtipo": "Horror",
+	"faccao": ["Véu das Sombras"], "custo": {"incolor": 2, "Véu das Sombras": 2},
+	"poder": 4, "resiliencia": 3, "palavras_chave": [],
+	"texto_flavor": "Ninguém o descreve duas vezes da mesma forma.",
+	"raridade": "comum", "arte": "res://assets/arte/cartas/vds_horror.png"
+  },
+  {
+	"id": "vds_ceifador", "nome": "Ceifador do Véu", "tipo": "Convocado", "subtipo": "Espectro",
+	"faccao": ["Véu das Sombras"], "custo": {"incolor": 3, "Véu das Sombras": 2},
+	"poder": 4, "resiliencia": 4, "palavras_chave": ["Voo"],
+	"efeitos": [{"gatilho": "ao_entrar", "acao": "drenar", "valor": 2}],
+	"texto_efeito": "Quando [Este Convocado] entra em jogo, cause 2 de dano ao Comandante inimigo e você ganha 2 de Vida.",
+	"raridade": "rara", "arte": "res://assets/arte/cartas/vds_ceifador.png"
+  },
+  {
+	"id": "vds_abominacao", "nome": "Abominação Costurada", "tipo": "Convocado", "subtipo": "Horror",
+	"faccao": ["Véu das Sombras"], "custo": {"incolor": 4, "Véu das Sombras": 2},
+	"poder": 6, "resiliencia": 5, "palavras_chave": [],
+	"efeitos": [{"gatilho": "ao_entrar", "acao": "dano", "alvo": "comandante_aliado", "valor": 2}],
+	"texto_efeito": "Quando [Este Convocado] entra em jogo, você perde 2 de Vida.",
+	"raridade": "rara", "arte": "res://assets/arte/cartas/vds_abominacao.png"
+  },
+  {
+	"id": "vds_dreno", "nome": "Dreno Vital", "tipo": "Feitiço",
+	"faccao": ["Véu das Sombras"], "custo": {"incolor": 1, "Véu das Sombras": 1},
+	"efeitos": [{"gatilho": "imediato", "acao": "drenar", "valor": 2}],
+	"texto_efeito": "Cause 2 de dano ao Comandante inimigo. Você ganha 2 de Vida.",
+	"raridade": "comum", "arte": "res://assets/arte/cartas/vds_dreno.png"
+  },
+  {
+	"id": "vds_toque_vazio", "nome": "Toque do Vazio", "tipo": "Feitiço",
+	"faccao": ["Véu das Sombras"], "custo": {"incolor": 1, "Véu das Sombras": 2},
+	"efeitos": [{"gatilho": "imediato", "acao": "destruir", "alvo": "convocado_inimigo"}],
+	"texto_efeito": "Destrua um Convocado inimigo alvo.",
+	"raridade": "incomum", "arte": "res://assets/arte/cartas/vds_toque_vazio.png"
+  },
+  {
+	"id": "vds_sussurros", "nome": "Sussurros do Além", "tipo": "Feitiço",
+	"faccao": ["Véu das Sombras"], "custo": {"incolor": 0, "Véu das Sombras": 2},
+	"efeitos": [{"gatilho": "imediato", "acao": "reviver", "alvo": "cemiterio_convocado"}],
+	"texto_efeito": "Retorne um Convocado alvo do seu Cemitério para a sua mão.",
+	"raridade": "comum", "arte": "res://assets/arte/cartas/vds_sussurros.png"
+  },
+  {
+	"id": "vds_oferenda", "nome": "Oferenda Sombria", "tipo": "Feitiço",
+	"faccao": ["Véu das Sombras"], "custo": {"incolor": 0, "Véu das Sombras": 1},
+	"custo_adicional": "sacrificar_convocado",
+	"efeitos": [{"gatilho": "imediato", "acao": "comprar", "valor": 2}],
+	"texto_efeito": "Como custo adicional, sacrifique um Convocado aliado. Compre 2 cartas.",
+	"raridade": "comum", "arte": "res://assets/arte/cartas/vds_oferenda.png"
+  },
+  {
+	"id": "vds_calice", "nome": "Cálice de Essência Negra", "tipo": "Relíquia",
+	"faccao": ["Véu das Sombras"], "custo": {"incolor": 1, "Véu das Sombras": 1},
+	"efeitos": [{"gatilho": "ativada", "custo": {"incolor": 1}, "acao": "drenar", "valor": 1}],
+	"texto_efeito": "1, Usar [Esta Relíquia]: cause 1 de dano ao Comandante inimigo e você ganha 1 de Vida.",
+	"raridade": "incomum", "arte": "res://assets/arte/cartas/vds_calice.png"
+  }
+]

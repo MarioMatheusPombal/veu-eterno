@@ -1,0 +1,67 @@
+[
+  {
+	"id": "ordwyn",
+	"nome": "Ordwyn, o Escudo Coroado",
+	"faccao": ["Coroa Radiante"],
+	"vida": 20,
+	"habilidade_passiva": "Sempre que um Convocado aliado entra em jogo sob seu controle, você ganha 1 de Vida.",
+	"habilidade_comando": {
+	  "custo": {"incolor": 3},
+	  "texto": "Convocados aliados ganham +1/+1 até o final do turno.",
+	  "efeitos": [
+		{"gatilho": "imediato", "acao": "buff", "alvo": "todos_aliados", "poder": 1, "resiliencia": 1, "duracao": "turno"}
+	  ]
+	},
+	"texto_flavor": "Enquanto houver um escudo entre meu povo e o abismo, eu serei esse escudo.",
+	"arte": "res://assets/arte/comandantes/ordwyn.png"
+  },
+  {
+	"id": "sylvaine",
+	"nome": "Sylvaine, Mãe-Raiz",
+	"faccao": ["Vínculo Selvagem"],
+	"vida": 20,
+	"habilidade_passiva": "Convocados aliados com Poder 5 ou mais custam 1 Essência a menos para conjurar.",
+	"habilidade_comando": {
+	  "custo": {"incolor": 2},
+	  "texto": "Uma Fonte aliada produz 1 Essência adicional neste turno.",
+	  "efeitos": [
+		{"gatilho": "imediato", "acao": "essencia", "valor": 1, "faccao": true}
+	  ]
+	},
+	"texto_flavor": "Toda floresta já foi uma semente paciente.",
+	"arte": "res://assets/arte/comandantes/sylvaine.png"
+  },
+  {
+	"id": "nyx",
+	"nome": "Nyx Vharren, a Sussurro-Sombra",
+	"faccao": ["Véu das Sombras"],
+	"vida": 20,
+	"habilidade_passiva": "Sempre que um Convocado aliado morre, você ganha 1 de Vida.",
+	"habilidade_comando": {
+	  "custo": {"incolor": 2},
+	  "custo_adicional": "sacrificar_convocado",
+	  "texto": "Sacrifique um Convocado aliado: cause 2 de dano ao Comandante inimigo.",
+	  "efeitos": [
+		{"gatilho": "imediato", "acao": "dano", "alvo": "comandante_inimigo", "valor": 2}
+	  ]
+	},
+	"texto_flavor": "A morte não é fim — é só a primeira pergunta que ela faz.",
+	"arte": "res://assets/arte/comandantes/nyx.png"
+  },
+  {
+	"id": "korrath",
+	"nome": "Korrath, Punho de Cinzas",
+	"faccao": ["Corrente do Caos"],
+	"vida": 20,
+	"habilidade_passiva": "Convocados aliados com custo total 2 ou menos ganham Investida.",
+	"habilidade_comando": {
+	  "custo": {"incolor": 1},
+	  "texto": "Cause 1 de dano ao Comandante inimigo.",
+	  "efeitos": [
+		{"gatilho": "imediato", "acao": "dano", "alvo": "comandante_inimigo", "valor": 1}
+	  ]
+	},
+	"texto_flavor": "Não espero pela vitória. Eu a arranco.",
+	"arte": "res://assets/arte/comandantes/korrath.png"
+  }
+]

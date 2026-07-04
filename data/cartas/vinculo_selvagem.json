@@ -1,0 +1,94 @@
+[
+  {
+	"id": "vs_fonte", "nome": "Fonte Selvagem", "tipo": "Fonte", "basica": true,
+	"faccao": ["Vínculo Selvagem"],
+	"texto_efeito": "Produz 1 Essência do Vínculo Selvagem.",
+	"texto_flavor": "As raízes bebem do Véu como bebem da chuva.",
+	"raridade": "comum", "arte": "res://assets/arte/cartas/vs_fonte.png"
+  },
+  {
+	"id": "vs_broto", "nome": "Broto Ancestral", "tipo": "Convocado", "subtipo": "Ancião",
+	"faccao": ["Vínculo Selvagem"], "custo": {"incolor": 0, "Vínculo Selvagem": 1},
+	"poder": 0, "resiliencia": 3, "palavras_chave": [],
+	"texto_flavor": "Um dia será floresta. Hoje, apenas espera.",
+	"raridade": "comum", "arte": "res://assets/arte/cartas/vs_broto.png"
+  },
+  {
+	"id": "vs_lobo", "nome": "Lobo do Matagal", "tipo": "Convocado", "subtipo": "Fera",
+	"faccao": ["Vínculo Selvagem"], "custo": {"incolor": 1, "Vínculo Selvagem": 1},
+	"poder": 2, "resiliencia": 2, "palavras_chave": [],
+	"texto_flavor": "A mata inteira é a sua alcateia.",
+	"raridade": "comum", "arte": "res://assets/arte/cartas/vs_lobo.png"
+  },
+  {
+	"id": "vs_druida", "nome": "Cultivadora de Raízes", "tipo": "Convocado", "subtipo": "Ancião",
+	"faccao": ["Vínculo Selvagem"], "custo": {"incolor": 0, "Vínculo Selvagem": 2},
+	"poder": 1, "resiliencia": 1, "palavras_chave": [],
+	"efeitos": [{"gatilho": "ao_entrar", "acao": "buscar_fonte"}],
+	"texto_efeito": "Quando [Este Convocado] entra em jogo, procure uma Fonte no seu baralho e coloque-a no Campo usada.",
+	"raridade": "comum", "arte": "res://assets/arte/cartas/vs_druida.png"
+  },
+  {
+	"id": "vs_javali", "nome": "Javali de Presas Rubras", "tipo": "Convocado", "subtipo": "Fera",
+	"faccao": ["Vínculo Selvagem"], "custo": {"incolor": 2, "Vínculo Selvagem": 1},
+	"poder": 3, "resiliencia": 3, "palavras_chave": [],
+	"texto_flavor": "Não é raiva. É apenas o caminho mais curto.",
+	"raridade": "comum", "arte": "res://assets/arte/cartas/vs_javali.png"
+  },
+  {
+	"id": "vs_urso", "nome": "Urso-Ancião da Clareira", "tipo": "Convocado", "subtipo": "Fera",
+	"faccao": ["Vínculo Selvagem"], "custo": {"incolor": 3, "Vínculo Selvagem": 1},
+	"poder": 4, "resiliencia": 4, "palavras_chave": [],
+	"texto_flavor": "A clareira existe porque ele decidiu dormir ali.",
+	"raridade": "comum", "arte": "res://assets/arte/cartas/vs_urso.png"
+  },
+  {
+	"id": "vs_mamute", "nome": "Mamute da Névoa", "tipo": "Convocado", "subtipo": "Colosso",
+	"faccao": ["Vínculo Selvagem"], "custo": {"incolor": 3, "Vínculo Selvagem": 2},
+	"poder": 5, "resiliencia": 4, "palavras_chave": [],
+	"texto_flavor": "Primeiro vem o tremor. Depois, a névoa se abre.",
+	"raridade": "incomum", "arte": "res://assets/arte/cartas/vs_mamute.png"
+  },
+  {
+	"id": "vs_gigante", "nome": "Colosso de Casca-Férrea", "tipo": "Convocado", "subtipo": "Colosso",
+	"faccao": ["Vínculo Selvagem"], "custo": {"incolor": 4, "Vínculo Selvagem": 2},
+	"poder": 6, "resiliencia": 6, "palavras_chave": [],
+	"texto_flavor": "Machados quebram. Ele não percebe.",
+	"raridade": "rara", "arte": "res://assets/arte/cartas/vs_gigante.png"
+  },
+  {
+	"id": "vs_hidra", "nome": "Hidra do Coração Verde", "tipo": "Convocado", "subtipo": "Colosso",
+	"faccao": ["Vínculo Selvagem"], "custo": {"incolor": 5, "Vínculo Selvagem": 2},
+	"poder": 8, "resiliencia": 8, "palavras_chave": [],
+	"texto_flavor": "O coração da floresta tem mais de uma cabeça.",
+	"raridade": "mítica", "arte": "res://assets/arte/cartas/vs_hidra.png"
+  },
+  {
+	"id": "vs_crescimento", "nome": "Crescimento Súbito", "tipo": "Feitiço",
+	"faccao": ["Vínculo Selvagem"], "custo": {"incolor": 1, "Vínculo Selvagem": 1},
+	"efeitos": [{"gatilho": "imediato", "acao": "buff", "alvo": "convocado_aliado", "poder": 3, "resiliencia": 3, "duracao": "turno"}],
+	"texto_efeito": "Um Convocado aliado alvo ganha +3/+3 até o final do turno.",
+	"raridade": "comum", "arte": "res://assets/arte/cartas/vs_crescimento.png"
+  },
+  {
+	"id": "vs_colheita", "nome": "Colheita Abundante", "tipo": "Feitiço",
+	"faccao": ["Vínculo Selvagem"], "custo": {"incolor": 0, "Vínculo Selvagem": 2},
+	"efeitos": [{"gatilho": "imediato", "acao": "essencia", "valor": 2, "faccao": true}],
+	"texto_efeito": "Ganhe 2 Essências do Vínculo Selvagem neste turno.",
+	"raridade": "comum", "arte": "res://assets/arte/cartas/vs_colheita.png"
+  },
+  {
+	"id": "vs_emboscada", "nome": "Emboscada Selvagem", "tipo": "Feitiço",
+	"faccao": ["Vínculo Selvagem"], "custo": {"incolor": 2, "Vínculo Selvagem": 1},
+	"efeitos": [{"gatilho": "imediato", "acao": "dano", "alvo": "convocado_inimigo", "valor": 4}],
+	"texto_efeito": "Cause 4 de dano a um Convocado inimigo alvo.",
+	"raridade": "incomum", "arte": "res://assets/arte/cartas/vs_emboscada.png"
+  },
+  {
+	"id": "vs_idolo", "nome": "Ídolo da Semente", "tipo": "Relíquia",
+	"faccao": ["Vínculo Selvagem"], "custo": {"incolor": 2, "Vínculo Selvagem": 1},
+	"efeitos": [{"gatilho": "continua", "acao": "aura", "poder": 0, "resiliencia": 1}],
+	"texto_efeito": "Convocados aliados ganham +0/+1.",
+	"raridade": "incomum", "arte": "res://assets/arte/cartas/vs_idolo.png"
+  }
+]
