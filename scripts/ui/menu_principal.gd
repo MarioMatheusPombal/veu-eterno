@@ -20,7 +20,7 @@ var btn_iniciar_rede: Button
 func _ready() -> void:
 	if Rede.ativo or Rede.conectado:
 		Rede.encerrar()
-	_montar_fundo("res://assets/arte/ui/fundo_menu", 0.45)
+	_montar_fundo("res://assets/ui/fundo_menu", 0.45)
 	telas["principal"] = _tela_principal()
 	telas["local"] = _tela_local()
 	telas["ip"] = _tela_ip()

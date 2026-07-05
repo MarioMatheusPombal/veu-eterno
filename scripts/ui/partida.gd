@@ -79,7 +79,7 @@ func _falas_de_entrada() -> void:
 # ---------------------------------------------------------------- construção da UI
 
 func _montar_ui() -> void:
-	_montar_fundo("res://assets/arte/ui/fundo_mesa", 0.35)
+	_montar_fundo("res://assets/ui/fundo_mesa", 0.35)
 
 	var margem := MarginContainer.new()
 	margem.set_anchors_preset(Control.PRESET_FULL_RECT)
