@@ -20,7 +20,7 @@ var btn_iniciar_rede: Button
 func _ready() -> void:
 	if Rede.ativo or Rede.conectado:
 		Rede.encerrar()
-	_montar_fundo("res://assets/arte/ui/fundo_menu.png", 0.45)
+	_montar_fundo("res://assets/arte/ui/fundo_menu", 0.45)
 	telas["principal"] = _tela_principal()
 	telas["local"] = _tela_local()
 	telas["ip"] = _tela_ip()
@@ -35,12 +35,17 @@ func _mostrar(nome: String) -> void:
 	for t in telas:
 		telas[t].visible = t == nome
 
-## Usa a arte de fundo se o PNG existir; senão, cor sólida. Um véu escuro por cima
-## garante a legibilidade do texto em qualquer arte.
-func _montar_fundo(caminho: String, escurecer: float) -> void:
-	if ResourceLoader.exists(caminho, "Texture2D"):
+## Usa a arte de fundo se existir (aceita .png/.jpg/.jpeg/.webp); senão, cor sólida.
+## Um véu escuro por cima garante a legibilidade do texto em qualquer arte.
+func _montar_fundo(base: String, escurecer: float) -> void:
+	var textura: Texture2D = null
+	for ext in ["png", "jpg", "jpeg", "webp"]:
+		if ResourceLoader.exists("%s.%s" % [base, ext], "Texture2D"):
+			textura = load("%s.%s" % [base, ext])
+			break
+	if textura != null:
 		var tex := TextureRect.new()
-		tex.texture = load(caminho)
+		tex.texture = textura
 		tex.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 		tex.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
 		tex.set_anchors_preset(Control.PRESET_FULL_RECT)

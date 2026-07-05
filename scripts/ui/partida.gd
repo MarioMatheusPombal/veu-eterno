@@ -28,6 +28,8 @@ var ia_ocupada := false
 
 var fila_anim: Array = []
 var animando := false
+var _origem_jogada := Vector2.ZERO   # posição real da carta clicada na mão
+var _tem_origem_jogada := false
 var camada_anim: Control
 var camada_linhas: Control  # linhas de bloqueio desenhadas por cima do tabuleiro
 var detalhe: DetalheCarta   # visualização ampliada (botão direito)
@@ -77,7 +79,7 @@ func _falas_de_entrada() -> void:
 # ---------------------------------------------------------------- construção da UI
 
 func _montar_ui() -> void:
-	_montar_fundo("res://assets/arte/ui/fundo_mesa.png", 0.35)
+	_montar_fundo("res://assets/arte/ui/fundo_mesa", 0.35)
 
 	var margem := MarginContainer.new()
 	margem.set_anchors_preset(Control.PRESET_FULL_RECT)
@@ -326,7 +328,10 @@ func _evento_visual(tipo: String, info: Dictionary) -> void:
 			var dono := int(info["jogador"])
 			var pos := "baixo" if dono == _jogador_baixo() else "cima"
 			var de: Vector2
-			if pos == "baixo":
+			if _tem_origem_jogada and dono == motor.ativo:
+				de = _origem_jogada  # posição exata da carta clicada na mão
+				_tem_origem_jogada = false
+			elif pos == "baixo":
 				de = mao_box.get_global_rect().get_center()
 			else:
 				de = _pos_cmd(dono) + Vector2(0, -40)
@@ -648,6 +653,8 @@ func _clicou_mao(cv: CartaVisual) -> void:
 	if erro != "":
 		_instr(erro)
 		return
+	_origem_jogada = cv.get_global_rect().get_center()
+	_tem_origem_jogada = true
 	origem = "mao"
 	carta_idx = idx
 	alvos = {}
@@ -702,6 +709,7 @@ func _resetar_modo() -> void:
 	alvos = {}
 	requisito = ""
 	atacantes_sel = []
+	_tem_origem_jogada = false
 	if not animando:
 		_atualizar()
 
@@ -912,12 +920,17 @@ func _voltar_ao_menu() -> void:
 		Rede.encerrar()
 	get_tree().change_scene_to_file("res://scenes/menu_principal.tscn")
 
-## Usa a arte da mesa se o PNG existir; senão, cor sólida. Um véu escuro por cima
-## mantém as cartas legíveis sobre qualquer arte.
-func _montar_fundo(caminho: String, escurecer: float) -> void:
-	if ResourceLoader.exists(caminho, "Texture2D"):
+## Usa a arte da mesa se existir (aceita .png/.jpg/.jpeg/.webp); senão, cor sólida.
+## Um véu escuro por cima mantém as cartas legíveis sobre qualquer arte.
+func _montar_fundo(base: String, escurecer: float) -> void:
+	var textura: Texture2D = null
+	for ext in ["png", "jpg", "jpeg", "webp"]:
+		if ResourceLoader.exists("%s.%s" % [base, ext], "Texture2D"):
+			textura = load("%s.%s" % [base, ext])
+			break
+	if textura != null:
 		var tex := TextureRect.new()
-		tex.texture = load(caminho)
+		tex.texture = textura
 		tex.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 		tex.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
 		tex.set_anchors_preset(Control.PRESET_FULL_RECT)

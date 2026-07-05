@@ -55,12 +55,14 @@ func _construir(tam: Vector2) -> void:
 	painel.add_theme_stylebox_override("panel", _estilo)
 	add_child(painel)
 
+	var eh_convocado: bool = dados.get("tipo", "") == "Convocado"
 	var v := VBoxContainer.new()
 	v.set_anchors_preset(Control.PRESET_FULL_RECT)
 	v.offset_left = 6 * e
 	v.offset_right = -6 * e
 	v.offset_top = 5 * e
-	v.offset_bottom = -5 * e
+	# Convocados reservam uma faixa no rodapé para o Poder/Resiliência fixo.
+	v.offset_bottom = -(19 * e) if eh_convocado else -(5 * e)
 	v.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	v.add_theme_constant_override("separation", int(2 * e))
 	add_child(v)
@@ -68,12 +70,23 @@ func _construir(tam: Vector2) -> void:
 	var topo := HBoxContainer.new()
 	topo.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	v.add_child(topo)
-	var nome := _label(str(dados.get("nome", "?")), int(10 * e))
+	var fonte := get_theme_default_font()
+	var texto_custo := _texto_custo() if dados.has("custo") else ""
+	var largura_custo := fonte.get_string_size(texto_custo, HORIZONTAL_ALIGNMENT_LEFT, -1,
+			int(10 * e)).x if texto_custo != "" else 0.0
+	# Nome com fonte auto-ajustável: encolhe até caber inteiro na largura disponível.
+	var texto_nome := str(dados.get("nome", "?"))
+	var largura_disp := tam.x - 12 * e - largura_custo - 6 * e
+	var fonte_nome := int(10 * e)
+	while fonte_nome > maxi(int(6 * e), 6) \
+			and fonte.get_string_size(texto_nome, HORIZONTAL_ALIGNMENT_LEFT, -1, fonte_nome).x > largura_disp:
+		fonte_nome -= 1
+	var nome := _label(texto_nome, fonte_nome)
 	nome.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	nome.clip_text = true
 	topo.add_child(nome)
-	if dados.has("custo"):
-		topo.add_child(_label(_texto_custo(), int(10 * e)))
+	if texto_custo != "":
+		topo.add_child(_label(texto_custo, int(10 * e)))
 
 	var arte := _no_de_arte()
 	arte.custom_minimum_size = Vector2(0, tam.y * 0.34)
@@ -83,7 +96,13 @@ func _construir(tam: Vector2) -> void:
 
 	var texto := _texto_de_regras()
 	if texto != "":
-		var lbl := _label(texto, int(8 * e))
+		# Descrições longas encolhem a fonte para caber sem empurrar o resto.
+		var fonte_texto := 8.0
+		if texto.length() > 60:
+			fonte_texto = 7.0
+		if texto.length() > 110:
+			fonte_texto = 6.0
+		var lbl := _label(texto, maxi(int(fonte_texto * e), 6))
 		lbl.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		lbl.size_flags_vertical = Control.SIZE_EXPAND_FILL
 		lbl.clip_contents = true
@@ -94,10 +113,15 @@ func _construir(tam: Vector2) -> void:
 		vazio.size_flags_vertical = Control.SIZE_EXPAND_FILL
 		v.add_child(vazio)
 
-	if dados.get("tipo", "") == "Convocado":
-		var stats := _label(_texto_stats(), int(11 * e))
-		stats.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
-		v.add_child(stats)
+	if eh_convocado:
+		# Poder/Resiliência ancorado no canto inferior direito — nunca sai da carta.
+		var texto_stats := _texto_stats()
+		var fonte_stats := int(11 * e)
+		var stats := _label(texto_stats, fonte_stats)
+		var largura_stats := fonte.get_string_size(texto_stats, HORIZONTAL_ALIGNMENT_LEFT, -1,
+				fonte_stats).x
+		stats.position = Vector2(tam.x - largura_stats - 7 * e, tam.y - 17 * e)
+		add_child(stats)
 
 	_aplicar_acabamento(e)
 
