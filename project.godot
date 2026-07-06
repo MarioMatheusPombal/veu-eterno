@@ -19,6 +19,7 @@ config/icon="res://icon.svg"
 
 BancoDados="*res://scripts/autoload/banco_dados.gd"
 Opcoes="*res://scripts/autoload/opcoes.gd"
+Api="*res://scripts/autoload/api.gd"
 Rede="*res://scripts/autoload/rede.gd"
 Som="*res://scripts/autoload/som.gd"
 

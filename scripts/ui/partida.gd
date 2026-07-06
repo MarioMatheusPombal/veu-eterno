@@ -897,6 +897,7 @@ func _bloquear_ia() -> void:
 # ---------------------------------------------------------------- utilidades
 
 func _fim_de_jogo(vencedor: int) -> void:
+	_reportar_resultado(vencedor)
 	Som.falar(motor.jogadores[vencedor].comandante["id"], "vitoria", true)
 	get_tree().create_timer(2.0).timeout.connect(func() -> void:
 		Som.falar(motor.jogadores[1 - vencedor].comandante["id"], "derrota", true))
@@ -906,6 +907,24 @@ func _fim_de_jogo(vencedor: int) -> void:
 	dlg.confirmed.connect(_voltar_ao_menu)
 	add_child(dlg)
 	dlg.popup_centered()
+
+## Partida em rede: os DOIS clientes reportam o resultado ao servidor, que cruza
+## os relatos (só relatos concordantes valem; ranqueada aplica o rating lá).
+## Fire-and-forget: o HTTPRequest vive no autoload Api e sobrevive à troca de cena.
+func _reportar_resultado(vencedor: int) -> void:
+	var cfg: Dictionary = BancoDados.config_partida
+	if not Rede.ativo or not Api.logado() or not cfg.has("modo"):
+		return
+	var contas: Array = cfg.get("contas", ["", ""])
+	var meu: int = Rede.meu_lugar
+	if meu < 0 or str(contas[0]) == "" or str(contas[1]) == "":
+		return
+	var r: Dictionary = await Api.reportar_resultado(str(cfg["modo"]),
+			int(cfg.get("seed", 0)), meu, vencedor, str(contas[1 - meu]))
+	if r.ok and str(r.dados.get("estado", "")) == "confirmada" \
+			and r.dados.get("delta_rating") != null:
+		var delta := int(r.dados["delta_rating"])
+		_log("🏆 Ranqueada confirmada: %+d de rating para o vencedor." % delta)
 
 func _ao_desconectar() -> void:
 	var dlg := AcceptDialog.new()

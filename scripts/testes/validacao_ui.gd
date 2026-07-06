@@ -32,6 +32,13 @@ func _rodar() -> void:
 	carta_foil.queue_free()
 	await get_tree().process_frame
 
+	print("[validacao] instanciando coleção (sem servidor: deve degradar sem erro)...")
+	var colecao: Node = load("res://scenes/colecao.tscn").instantiate()
+	add_child(colecao)
+	await get_tree().create_timer(1.0).timeout
+	colecao.queue_free()
+	await get_tree().process_frame
+
 	print("[validacao] instanciando partida (Ordwyn vs IA Korrath)...")
 	BancoDados.config_partida = {"jogadores": [
 		{"comandante": "ordwyn", "eh_ia": false},

@@ -16,6 +16,10 @@ var lbl_status: Label
 var lbl_escolhas: Label
 var grupo_rede: Array = []
 var btn_iniciar_rede: Button
+var opcao_modo_rede: OptionButton
+# Tela ranking
+var lista_ranking: VBoxContainer
+var lbl_ranking_status: Label
 
 func _ready() -> void:
 	if Rede.ativo or Rede.conectado:
@@ -24,6 +28,7 @@ func _ready() -> void:
 	telas["principal"] = _tela_principal()
 	telas["local"] = _tela_local()
 	telas["ip"] = _tela_ip()
+	telas["ranking"] = _tela_ranking()
 	telas["opcoes"] = _tela_opcoes()
 	for nome in telas:
 		add_child(telas[nome])
@@ -105,6 +110,11 @@ func _tela_principal() -> Control:
 	sub.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	_botao(v, "⚔  Jogar (neste PC)", func() -> void: _mostrar("local"))
 	_botao(v, "🌐  Jogar por IP", func() -> void: _mostrar("ip"))
+	_botao(v, "🃏  Coleção & Loja", func() -> void:
+		get_tree().change_scene_to_file("res://scenes/colecao.tscn"))
+	_botao(v, "🏆  Ranking", func() -> void:
+		_mostrar("ranking")
+		_atualizar_ranking())
 	_botao(v, "⚙  Opções", func() -> void: _mostrar("opcoes"))
 	_botao(v, "Sair", func() -> void: get_tree().quit())
 	return par[0]
@@ -171,6 +181,21 @@ func _tela_ip() -> Control:
 	lbl_status = _rotulo(v, "Crie uma sala ou conecte-se a uma.", 11)
 	lbl_status.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	lbl_status.custom_minimum_size = Vector2(380, 0)
+	# Modo da partida (só o host decide; ranqueada exige os dois logados no servidor).
+	var linha_modo := HBoxContainer.new()
+	linha_modo.add_theme_constant_override("separation", 8)
+	v.add_child(linha_modo)
+	var lbl_modo := Label.new()
+	lbl_modo.text = "Modo:"
+	lbl_modo.add_theme_font_size_override("font_size", 12)
+	linha_modo.add_child(lbl_modo)
+	opcao_modo_rede = OptionButton.new()
+	opcao_modo_rede.add_item("Normal (sem rating)")
+	opcao_modo_rede.add_item("Ranqueada (vale rating)")
+	opcao_modo_rede.tooltip_text = "Ranqueada exige que os dois jogadores tenham entrado\nno servidor (tela Coleção & Loja) ao menos uma vez."
+	opcao_modo_rede.item_selected.connect(func(i: int) -> void:
+		Rede.definir_modo("ranqueada" if i == 1 else "normal"))
+	linha_modo.add_child(opcao_modo_rede)
 	_rotulo(v, "Seu Comandante:")
 	var linha_cmd := HBoxContainer.new()
 	linha_cmd.add_theme_constant_override("separation", 8)
@@ -225,8 +250,32 @@ func _tela_opcoes() -> Control:
 		Opcoes.velocidade_ia = valor
 		Opcoes.salvar())
 	v.add_child(slider)
+	_rotulo(v, "Nome do jogador (Coleção/Ranking):", 12)
+	var campo_nome := LineEdit.new()
+	campo_nome.text = Opcoes.nome_jogador
+	campo_nome.custom_minimum_size = Vector2(320, 0)
+	campo_nome.text_submitted.connect(func(_t: String) -> void: _salvar_conta(campo_nome, null))
+	v.add_child(campo_nome)
+	_rotulo(v, "Servidor do meta-jogo (Coleção/Loja/Ranking):", 12)
+	var campo_servidor := LineEdit.new()
+	campo_servidor.text = Opcoes.servidor_url
+	campo_servidor.custom_minimum_size = Vector2(320, 0)
+	campo_servidor.tooltip_text = "Ex.: http://127.0.0.1:3000 (dev) ou https://api.seudominio.com"
+	campo_servidor.text_submitted.connect(func(_t: String) -> void: _salvar_conta(null, campo_servidor))
+	v.add_child(campo_servidor)
+	var btn_aplicar := _botao(v, "Aplicar dados do servidor", func() -> void:
+		_salvar_conta(campo_nome, campo_servidor), 32)
+	btn_aplicar.tooltip_text = "Salva e encerra a sessão atual (o próximo acesso reloga)."
 	_botao(v, "← Voltar", (func() -> void: _mostrar("principal")), 32)
 	return par[0]
+
+func _salvar_conta(campo_nome: LineEdit, campo_servidor: LineEdit) -> void:
+	if campo_nome != null and campo_nome.text.strip_edges() != "":
+		Opcoes.nome_jogador = campo_nome.text.strip_edges()
+	if campo_servidor != null and campo_servidor.text.strip_edges() != "":
+		Opcoes.servidor_url = campo_servidor.text.strip_edges().rstrip("/")
+	Opcoes.salvar()
+	Api.sair()  # força novo login com os dados novos
 
 
 # ---------------------------------------------------------------- ações
@@ -267,6 +316,71 @@ func _atualizar_lobby() -> void:
 		var id_cmd: String = Rede.comandantes[lugar]
 		var nome: String = BancoDados.comandantes[id_cmd]["nome"] if id_cmd != "" else "—"
 		nomes.append("J%d: %s" % [lugar + 1, nome])
-	lbl_escolhas.text = " | ".join(nomes)
+	var extra := ""
+	if Rede.modo == "ranqueada":
+		extra = "  |  🏆 Ranqueada" + ("" if Rede.contas_prontas() else " (aguardando login dos dois lados)")
+	lbl_escolhas.text = " | ".join(nomes) + extra
+	opcao_modo_rede.disabled = Rede.meu_lugar == 1
+	opcao_modo_rede.selected = 1 if Rede.modo == "ranqueada" else 0
 	btn_iniciar_rede.disabled = not (Rede.meu_lugar == 0 and Rede.pronto_para_iniciar())
 	btn_iniciar_rede.visible = Rede.meu_lugar != 1
+
+func _tela_ranking() -> Control:
+	var par := _centro_com_vbox()
+	var v: VBoxContainer = par[1]
+	_titulo(v)
+	_rotulo(v, "🏆 Ranking — Modo Ranqueado", 18)
+	lbl_ranking_status = _rotulo(v, "", 11)
+	var rolagem := ScrollContainer.new()
+	rolagem.custom_minimum_size = Vector2(560, 480)
+	v.add_child(rolagem)
+	lista_ranking = VBoxContainer.new()
+	lista_ranking.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	lista_ranking.add_theme_constant_override("separation", 2)
+	rolagem.add_child(lista_ranking)
+	_botao(v, "↻ Atualizar", _atualizar_ranking, 32)
+	_botao(v, "← Voltar", (func() -> void: _mostrar("principal")), 32)
+	return par[0]
+
+func _atualizar_ranking() -> void:
+	lbl_ranking_status.text = "Carregando..."
+	for filho in lista_ranking.get_children():
+		filho.queue_free()
+	var erro: String = await Api.garantir_sessao()
+	if not is_instance_valid(lbl_ranking_status):
+		return  # o menu foi fechado durante o await
+	if erro != "":
+		lbl_ranking_status.text = erro
+		return
+	var r: Dictionary = await Api.rankings()
+	if not is_instance_valid(lbl_ranking_status):
+		return
+	if not r.ok:
+		lbl_ranking_status.text = str(r.dados.get("erro", "Falha ao carregar o ranking."))
+		return
+	var eu: Variant = r.dados.get("eu")
+	if eu is Dictionary and int(eu.get("partidas_ranqueadas", 0)) > 0:
+		lbl_ranking_status.text = "Você: #%s — %s pts (%s vitórias em %s partidas)" % [
+			str(eu["posicao"]), str(eu["rating"]),
+			str(eu["vitorias_ranqueadas"]), str(eu["partidas_ranqueadas"])]
+	else:
+		lbl_ranking_status.text = "Jogue uma partida ranqueada para entrar no ranking."
+	var top: Array = r.dados.get("top", [])
+	if top.is_empty():
+		_linha_ranking("Ainda não há jogadores ranqueados.", false)
+		return
+	var posicao := 1
+	for linha in top:
+		_linha_ranking("#%d   %s — %s pts  (%sV/%sP)" % [posicao, str(linha["nickname"]),
+				str(linha["rating"]), str(linha["vitorias_ranqueadas"]),
+				str(linha["partidas_ranqueadas"])],
+				str(linha.get("nickname", "")) == str(Api.jogador.get("nickname", "")))
+		posicao += 1
+
+func _linha_ranking(texto: String, destacar: bool) -> void:
+	var lbl := Label.new()
+	lbl.text = texto
+	lbl.add_theme_font_size_override("font_size", 13)
+	if destacar:
+		lbl.add_theme_color_override("font_color", Color(0.88, 0.78, 0.45))
+	lista_ranking.add_child(lbl)

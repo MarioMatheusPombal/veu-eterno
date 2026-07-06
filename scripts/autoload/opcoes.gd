@@ -7,6 +7,8 @@ var tela_cheia := false
 var animacoes := true
 var tremor := true
 var velocidade_ia := 0.6  # segundos entre ações da IA
+var servidor_url := "http://127.0.0.1:3000"  # backend do meta-jogo (Coleção/Loja/Ranking)
+var nome_jogador := ""    # usado no login; vazio = nome de usuário do sistema
 
 func _ready() -> void:
 	carregar()
@@ -20,6 +22,12 @@ func carregar() -> void:
 	animacoes = bool(cfg.get_value("jogo", "animacoes", animacoes))
 	tremor = bool(cfg.get_value("jogo", "tremor", tremor))
 	velocidade_ia = float(cfg.get_value("jogo", "velocidade_ia", velocidade_ia))
+	servidor_url = str(cfg.get_value("rede", "servidor_url", servidor_url)).rstrip("/")
+	nome_jogador = str(cfg.get_value("rede", "nome_jogador", nome_jogador))
+	if nome_jogador.strip_edges() == "":
+		nome_jogador = OS.get_environment("USERNAME")
+		if nome_jogador == "":
+			nome_jogador = "Duelista"
 
 func salvar() -> void:
 	var cfg := ConfigFile.new()
@@ -27,6 +35,8 @@ func salvar() -> void:
 	cfg.set_value("jogo", "animacoes", animacoes)
 	cfg.set_value("jogo", "tremor", tremor)
 	cfg.set_value("jogo", "velocidade_ia", velocidade_ia)
+	cfg.set_value("rede", "servidor_url", servidor_url)
+	cfg.set_value("rede", "nome_jogador", nome_jogador)
 	cfg.save(CAMINHO)
 
 func definir_tela_cheia(valor: bool) -> void:
